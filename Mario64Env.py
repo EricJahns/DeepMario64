@@ -6,6 +6,7 @@ import mss
 import time
 import pyautogui
 from Mario64Reward import Mario64Reward
+from Mario64CoinParser import Mario64CoinParser
 
 DISCRETE_ACTIONS = {'release_wasd': 'release_wasd',
                     'w': 'run_forwards',                
@@ -58,6 +59,8 @@ class Mario64Env(gym.Env):
                                             dtype=np.uint8)
         self.iteration = 1
         self.cur_damage = 0
+        self.coin_parser = Mario64CoinParser()
+        self.num_of_coins = 0
 
         self.reward: Mario64Reward = Mario64Reward()
 
@@ -82,17 +85,18 @@ class Mario64Env(gym.Env):
         self.iteration += 1
         episode_over = False
     
-        self.take_action(action)
-        # time.sleep(0.1)
+        # self.take_action(action)
+        time.sleep(0.1)
 
         frame = self.grab_screen_shot()
         damage = self.get_damage(frame)
+
+        self.num_of_coins = self.coin_parser.get_num_of_coins(frame, self.num_of_coins)
+
         if damage == 7 or self.iteration % 500 == 0:
             episode_over = True
 
-        self.cur_damage = damage
-
-        reward, _ = self.reward.get_reward(frame, damage)
+        reward, _ = self.reward.get_reward(frame, damage, self.num_of_coins)
 
         self.cur_max_reward = max(self.cur_max_reward, reward)
 
@@ -101,7 +105,7 @@ class Mario64Env(gym.Env):
         current_fps = round(((1 / (t_end - t0)) * 10), 0) 
         
         if not episode_over:
-            print(f'Model: Iteration: {self.iteration} | FPS: {current_fps} | Damage: {self.cur_damage} | Reward: {reward} | Action: {ACTION_NUM_TO_WORD[action]}')
+            print(f'Model: Iteration: {self.iteration} | FPS: {current_fps} | Coins: {self.num_of_coins} | Damage: {damage} | Reward: {reward} | Action: {ACTION_NUM_TO_WORD[action]}')
         else:
             print(f'Model: Reward: {reward} | FPS: {current_fps} | Max Reward: {self.cur_max_reward}')
 
@@ -133,7 +137,7 @@ class Mario64Env(gym.Env):
             self.sped_up_game = True
 
         self.cur_max_reward = -100
-        self.cur_damage = 0
+        self.num_of_coins = 0
 
         return self.grab_screen_shot(), {}
     

@@ -1,8 +1,5 @@
 import numpy as np
-import time
-from termcolor import cprint
 from ultralytics import YOLO
-from enum import Enum
 
 class Mario64Reward():
     YOLO_MODEL = None
@@ -43,7 +40,7 @@ class Mario64Reward():
         self.found_collectable_last_step = False
         self.cur_damage = 0
 
-    def get_reward(self, frame: np.array, damage: int) -> float:                    
+    def get_reward(self, frame: np.array, damage: int, coins: int) -> float:                    
         # Reward the agent for being close to collectables
         reward_to_return, found_collectible, num_collectables = self.find_collectables(frame)
 
@@ -65,6 +62,8 @@ class Mario64Reward():
         self.cur_damage = damage
 
         reward_to_return -= damage_penalty
+
+        reward_to_return += coins
 
         return reward_to_return, num_collectables
     
