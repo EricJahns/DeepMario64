@@ -72,7 +72,7 @@ class Mario64Env(gym.Env):
         monitor = self.sct.monitors[1]
         sct_img = self.sct.grab(monitor)
         frame = cv2.cvtColor(np.asarray(sct_img, dtype=np.uint8), cv2.COLOR_RGB2BGR)
-        # self.render_frame(frame)
+
         return frame[536:960, 962:962+636]
     
     def render_frame(self, frame):                
@@ -85,15 +85,16 @@ class Mario64Env(gym.Env):
         self.iteration += 1
         episode_over = False
     
-        # self.take_action(action)
-        time.sleep(0.1)
+        self.take_action(action)
+        # time.sleep(0.5) # Comment above line and uncomment this line to take control of the game
 
         frame = self.grab_screen_shot()
         damage = self.get_damage(frame)
 
-        self.num_of_coins = self.coin_parser.get_num_of_coins(frame, self.num_of_coins)
+        updated_num_of_coins = self.coin_parser.get_num_of_coins(frame, self.num_of_coins)
+        self.num_of_coins = max(self.num_of_coins, updated_num_of_coins)
 
-        if damage == 7 or self.iteration % 500 == 0:
+        if damage == 7 or self.iteration % 500 == 0 or updated_num_of_coins < self.num_of_coins:
             episode_over = True
 
         reward, _ = self.reward.get_reward(frame, damage, self.num_of_coins)

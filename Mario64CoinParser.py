@@ -4,14 +4,19 @@ class Mario64CoinParser():
     def __init__(self):
         self.coins = [self.one, self.two, self.three, self.four, self.five, self.six, self.seven, self.eight, self.nine]
 
-    def get_num_of_coins(self, frame, cur_num_of_coins):
-        frame = frame[11:43, 395:424][:,:,::-1][...,0]
+    def get_num_of_coins(self, frame, cur_num_of_coins) -> int:
+        found: bool
+        frame = frame[11:43, 395:424][...,0]
 
-        for coord in self.coins[cur_num_of_coins]:
-            if frame[coord[0], coord[1]] != 255:
-                break
-
-        return cur_num_of_coins
+        for index in range(max(cur_num_of_coins-1, 0), len(self.coins)):
+            found = True
+            for coord in self.coins[index]:
+                if frame[coord[0], coord[1]] != 255:
+                    found = False
+                    break
+            if found:
+                return index + 1
+        return 0
 
     one = np.array([
         [1, 19],
@@ -87,7 +92,5 @@ class Mario64CoinParser():
         [28, 15],
         [17, 5]
     ])
-        
-    
 
-    
+    #! TODO: Add more numbers

@@ -2,6 +2,7 @@ YoloV8/test
 YoloV8/train
 YoloV8/valid
 YoloV8/data.yaml
+logs/
 *.zip
 __pycache__
 runs

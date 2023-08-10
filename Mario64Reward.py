@@ -15,6 +15,7 @@ class Mario64Reward():
     STAR_DISCOUNT = 0.0005
 
     AREA_DISCOUNT = 0.0005
+    DISTANCE_DISCOUNT = 0.005
 
     YELLOW_COIN_REWARD = 10
     RED_COIN_REWARD = 10
@@ -29,8 +30,6 @@ class Mario64Reward():
     cur_damage = 0
 
     found_collectable_last_step = False
-
-    DISTANCE_DISCOUNT = 0.005
 
     def __init__(self):
         self.model = YOLO('YoloV8/weights/best.pt')
@@ -92,7 +91,6 @@ class Mario64Reward():
             elif object_class == 2 and self.LOOK_FOR_YELLOW_COINS:
                 num_collectables += 1
                 reward += self.YELLOW_COIN_REWARD * area
-                print("reward", reward)
 
         if num_collectables == 0:
             reward = self.DEFAULT_STEP_REWARD
