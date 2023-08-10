@@ -91,10 +91,10 @@ class Mario64Env(gym.Env):
         frame = self.grab_screen_shot()
         damage = self.get_damage(frame)
 
-        updated_num_of_coins = self.coin_parser.get_num_of_coins(frame, self.num_of_coins)
-        self.num_of_coins = max(self.num_of_coins, updated_num_of_coins)
+        self.num_of_coins = max(self.coin_parser.get_num_of_coins(frame, self.num_of_coins), 
+                                self.num_of_coins)
 
-        if damage == 7 or self.iteration % 500 == 0 or updated_num_of_coins < self.num_of_coins:
+        if damage == 7 or self.iteration % 500 == 0:
             episode_over = True
 
         reward, _ = self.reward.get_reward(frame, damage, self.num_of_coins)
