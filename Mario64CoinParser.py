@@ -8,7 +8,7 @@ class Mario64CoinParser():
         found: bool
         frame = frame[11:43, 395:424][...,0]
 
-        for index in range(max(cur_num_of_coins-1, 0), len(self.coins)):
+        for index in range(max(0, cur_num_of_coins-1), min(len(self.coins), cur_num_of_coins+3)):
             found = True
             for coord in self.coins[index]:
                 if frame[coord[0], coord[1]] != 255:
