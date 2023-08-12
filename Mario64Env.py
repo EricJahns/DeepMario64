@@ -43,12 +43,12 @@ DAMAGE_TAKEN = {
     '7': cv2.imread('./damage_assets/7_damage.png')
 }
 
-pyautogui.PAUSE = 0.10
-
 ###############################################
 class Mario64Env(gym.Env):    
     def __init__(self):
         super(Mario64Env, self).__init__()
+
+        self.set_pyautogui_pause()
 
         self.action_space = spaces.Discrete(len(DISCRETE_ACTIONS))
 
@@ -138,6 +138,7 @@ class Mario64Env(gym.Env):
 
         self.cur_max_reward = -100
         self.num_of_coins = 0
+        self.reward.reset()
 
         return self.grab_screen_shot(), {}
     
@@ -149,10 +150,12 @@ class Mario64Env(gym.Env):
 
     def take_action(self, action):
         if action == 0:
+            self.normalize_pyautogui_pause()
             pyautogui.keyUp('up')
             pyautogui.keyUp('down')
             pyautogui.keyUp('left')
             pyautogui.keyUp('right')
+            self.set_pyautogui_pause()
         elif action == 1:
             pyautogui.keyUp('down')
             pyautogui.keyDown('up')
@@ -187,3 +190,9 @@ class Mario64Env(gym.Env):
 
     def seed(self):
         return 42
+    
+    def set_pyautogui_pause(self) -> None:
+        pyautogui.PAUSE = 0.075
+
+    def normalize_pyautogui_pause(self) -> None:
+        pyautogui.PAUSE = 0.035

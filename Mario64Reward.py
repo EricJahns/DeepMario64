@@ -1,4 +1,5 @@
 import numpy as np
+from math import floor
 from ultralytics import YOLO
 
 class Mario64Reward():
@@ -6,6 +7,7 @@ class Mario64Reward():
 
     DEFAULT_STEP_REWARD = -1
     BACKWARDS_PENALTY = 5
+    COIN_STEP_PENALTY = 50
 
     SCREEN_CENTER_X = 640/2
     SCREEN_CENTER_Y = 480/2
@@ -28,6 +30,9 @@ class Mario64Reward():
     previous_reward = 0
 
     cur_damage = 0
+    cur_coins = 0
+    
+    steps_since_last_coin = 0
 
     found_collectable_last_step = False
 
@@ -37,11 +42,14 @@ class Mario64Reward():
     def reset(self):
         self.previous_reward = 0
         self.found_collectable_last_step = False
-        self.cur_damage = 0
+        self.steps_since_last_coin = 0
 
     def get_reward(self, frame: np.array, damage: int, coins: int) -> float:                    
         # Reward the agent for being close to collectables
         reward_to_return, found_collectible, num_collectables = self.find_collectables(frame)
+
+        # Have we found a coin?
+        self.steps_since_last_coin += 1
 
         # Moving away from collectables
         if reward_to_return < self.previous_reward and found_collectible and self.found_collectable_last_step:
@@ -50,19 +58,13 @@ class Mario64Reward():
         self.previous_reward = reward_to_return
         self.found_collectable_last_step = found_collectible
 
-        damage_penalty = 2 * damage
+        if coins > self.cur_coins:
+            self.steps_since_last_coin = 0
 
-        if damage > self.cur_damage:
-            damage_penalty *= 2
+        # Penalize the agent for not collecting coins progressively more as time goes on
+        reward_to_return -= floor(self.steps_since_last_coin / self.COIN_STEP_PENALTY) + damage - coins
 
-        if damage < self.cur_damage:
-            damage_penalty *= -2
-            
-        self.cur_damage = damage
-
-        reward_to_return -= damage_penalty
-
-        reward_to_return += coins
+        self.cur_coins = coins
 
         return reward_to_return, num_collectables
     
