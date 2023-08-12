@@ -1,6 +1,7 @@
 import numpy as np
 from math import floor
 from ultralytics import YOLO
+from Constants import Constants
 
 class Mario64Reward():
     YOLO_MODEL = None
@@ -12,8 +13,8 @@ class Mario64Reward():
     SCREEN_CENTER_X = 640/2
     SCREEN_CENTER_Y = 480/2
 
-    YELLOW_COIN_DISCOUNT = 0.0005
-    RED_COIN_DISCOUNT = 0.0005
+    YELLOW_COIN_DISCOUNT = 0.0001
+    RED_COIN_DISCOUNT = 0.0003
     STAR_DISCOUNT = 0.0005
 
     AREA_DISCOUNT = 0.0005
@@ -37,7 +38,7 @@ class Mario64Reward():
     found_collectable_last_step = False
 
     def __init__(self):
-        self.model = YOLO('YoloV8/weights/best.pt')
+        self.model = YOLO(Constants.YOLO_MODEL_DIR)
 
     def reset(self):
         self.previous_reward = 0

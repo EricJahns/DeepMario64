@@ -8,6 +8,8 @@ class Constants:
     SCREEN_WIDTH: int = 636
     SCREEN_HEIGHT: int = 424
 
+    YOLO_MODEL_DIR: str = 'YoloV8/weights/best.pt'
+
     DISCRETE_ACTIONS: dict = {
     'release_wasd': 'release_wasd',
     'w': 'run_forwards',                
