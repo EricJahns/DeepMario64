@@ -1,8 +1,9 @@
 from Mario64Env import Mario64Env
-from stable_baselines3 import PPO
+# from stable_baselines3 import PPO
 from sb3_contrib import RecurrentPPO
 import os
 import glob
+import torch
 from termcolor import cprint
 
 TRAIN_TIMESTEPS = 10_000
@@ -17,17 +18,19 @@ DEVICE = 'cuda'
 
 POLICY = "CnnLstmPolicy"
 
-def get_RecurrentPPO(env: Mario64Env):
+def setup_RecurrentPPO(env: Mario64Env):
     
     config = {
         "policy": POLICY,
-        "n_steps": 250,
+        "n_steps": 500,
         "learning_rate": 3e-6,
         "gamma": 0.99,
         "batch_size": 256,
         "n_epochs": 10,
         "normalize_advantage": True,
+        "policy_kwargs": dict(activation_fn=torch.nn.LeakyReLU, net_arch=dict(vf=[64, 64, 32], pi=[64, 64, 32])),
         "verbose": 2,
+        "seed": 42,
         "tensorboard_log": "./logs/ppo_mario64",
         "device": 'cuda'
     }
@@ -40,7 +43,9 @@ def get_RecurrentPPO(env: Mario64Env):
                         batch_size=config["batch_size"],
                         n_epochs=config["n_epochs"],
                         normalize_advantage=config["normalize_advantage"],
+                        policy_kwargs=config["policy_kwargs"],
                         verbose=config["verbose"],
+                        seed=config["seed"],
                         tensorboard_log=config["tensorboard_log"],
                         device=config["device"])
             
@@ -51,8 +56,9 @@ def train(model, env: Mario64Env):
     iteration = 0
     if RESUME_TRAINING:
         iteration = get_last_iteration_num(MODEL_DIR)
-        cprint(f"Resuming training from last saved model iteration {iteration}...", "yellow")
-        model.load(f"{MODEL_DIR}/{MODEL_NAME}_{iteration}", env=env)
+        if iteration != 0:
+            cprint(f"Resuming training from last saved model iteration {iteration}...", "yellow")
+            model.load(f"{MODEL_DIR}/{MODEL_NAME}_{iteration}", env=env)
         iteration += 1
         
     while True:
@@ -79,5 +85,5 @@ def get_last_iteration_num(dir_path: str) -> int:
         
 if __name__ == "__main__":
     env = Mario64Env()
-    model = get_RecurrentPPO(env)
+    model = setup_RecurrentPPO(env)
     train(model, env)
