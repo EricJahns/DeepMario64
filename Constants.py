@@ -1,4 +1,5 @@
 import cv2
+import mss
 
 class Constants:
     #! Adjust me to crop the screen, use setup.ipynb to find the correct values
@@ -44,4 +45,16 @@ class Constants:
         '5': cv2.imread('./damage_assets/5_damage.png'),
         '6': cv2.imread('./damage_assets/6_damage.png'),
         '7': cv2.imread('./damage_assets/7_damage.png')
+    }
+
+    MONITOR_NUMBER = 1
+
+    CUR_MONITOR = mss.mss().monitors[MONITOR_NUMBER]
+
+    MONITOR = {
+        "top": CUR_MONITOR["top"] + SCREEN_Y, 
+        "left": CUR_MONITOR["left"] + SCREEN_X, 
+        "width": SCREEN_WIDTH, 
+        "height": SCREEN_HEIGHT,
+        "mon": CUR_MONITOR
     }

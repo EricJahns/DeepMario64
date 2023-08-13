@@ -36,11 +36,10 @@ class Mario64Env(gym.Env):
         self.sct: mss.mss = mss.mss()
 
     def grab_screen_shot(self):
-        monitor = self.sct.monitors[1]
-        sct_img = self.sct.grab(monitor)
+        sct_img = self.sct.grab(Constants.MONITOR)
         frame = cv2.cvtColor(np.asarray(sct_img, dtype=np.uint8), cv2.COLOR_RGB2BGR)
 
-        return frame[536:960, 962:962+636]
+        return frame
 
     def step(self, action: np.array):
         t0 = time.time()

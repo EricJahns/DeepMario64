@@ -86,4 +86,5 @@ def get_last_iteration_num(dir_path: str) -> int:
 if __name__ == "__main__":
     env = Mario64Env()
     model = setup_RecurrentPPO(env)
+    # print(model.polic y)
     train(model, env)
