@@ -47,11 +47,12 @@ class Constants:
         '7': cv2.imread('./damage_assets/7_damage.png')
     }
 
-    MONITOR_NUMBER = 1
+    #! Adjust me to change the monitor, use setup.ipynb to find the correct values
+    MONITOR_NUMBER: int = 1
 
     CUR_MONITOR = mss.mss().monitors[MONITOR_NUMBER]
 
-    MONITOR = {
+    MONITOR: dict = {
         "top": CUR_MONITOR["top"] + SCREEN_Y, 
         "left": CUR_MONITOR["left"] + SCREEN_X, 
         "width": SCREEN_WIDTH, 
