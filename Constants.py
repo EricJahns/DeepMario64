@@ -12,16 +12,16 @@ class Constants:
     YOLO_MODEL_DIR: str = 'YoloV8/weights/best.pt'
 
     DISCRETE_ACTIONS: dict = {
-    'release_wasd': 'release_wasd',
-    'w': 'run_forwards',                
-    's': 'run_backwards',
-    'a': 'run_left',
-    'd': 'run_right',
-    'shift': 'A',
-    'ctrl': 'B',
-    'z': 'Z',
-    # 'x': 'LT',
-    # 'c': 'RT'
+        'release_wasd': 'release_wasd',
+        'w': 'run_forwards',                
+        's': 'run_backwards',
+        'a': 'run_left',
+        'd': 'run_right',
+        'shift': 'A',
+        'ctrl': 'B',
+        'z': 'Z',
+        # 'x': 'LT',
+        # 'c': 'RT'
     }
 
     ACTION_NUM_TO_WORD: dict = {
