@@ -4,14 +4,14 @@ class Mario64CoinParser():
     def __init__(self):
         self.coins = [self.one, self.two, self.three, self.four, self.five, self.six, self.seven, self.eight, self.nine]
 
-    def get_num_of_coins(self, frame, cur_num_of_coins) -> int:
+    def get_num_of_coins(self, state, cur_num_of_coins) -> int:
         found: bool
-        frame = frame[11:43, 395:424][...,0]
+        state = state[11:43, 395:424][...,0]
 
         for index in range(max(0, cur_num_of_coins-1), min(len(self.coins), cur_num_of_coins+3)):
             found = True
             for coord in self.coins[index]:
-                if frame[coord[0], coord[1]] != 255:
+                if state[coord[0], coord[1]] != 255:
                     found = False
                     break
             if found:

@@ -45,9 +45,9 @@ class Mario64Reward():
         self.found_collectable_last_step = False
         self.steps_since_last_coin = 0
 
-    def get_reward(self, frame: np.array, damage: int, coins: int) -> float:                    
+    def get_reward(self, state: np.array, damage: int, coins: int) -> float:                    
         # Reward the agent for being close to collectables
-        reward_to_return, found_collectible, num_collectables = self.find_collectables(frame)
+        reward_to_return, found_collectible, num_collectables = self.find_collectables(state)
 
         # Have we found a coin?
         self.steps_since_last_coin += 1
@@ -69,12 +69,12 @@ class Mario64Reward():
 
         return reward_to_return, num_collectables
     
-    def find_collectables(self, frame: np.array) -> tuple:
+    def find_collectables(self, state: np.array) -> tuple:
         reward = 0
         found_collectible = False
         num_collectables = 0
 
-        preds = self.model.predict(frame[:,:,::-1])
+        preds = self.model.predict(state[:,:,::-1])
 
         for preds in preds[0].cpu().boxes.data.numpy():
             area = (preds[2] - preds[0]) * (preds[3] - preds[1]) * self.AREA_DISCOUNT

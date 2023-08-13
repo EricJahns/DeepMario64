@@ -35,11 +35,9 @@ class Mario64Env(gym.Env):
 
         self.sct: mss.mss = mss.mss()
 
-    def grab_screen_shot(self):
+    def get_state(self):
         sct_img = self.sct.grab(Constants.MONITOR)
-        frame = cv2.cvtColor(np.asarray(sct_img, dtype=np.uint8), cv2.COLOR_RGB2BGR)
-
-        return frame
+        return cv2.cvtColor(np.asarray(sct_img, dtype=np.uint8), cv2.COLOR_RGB2BGR)
 
     def step(self, action: np.array):
         t0 = time.time()
@@ -47,17 +45,17 @@ class Mario64Env(gym.Env):
         episode_over = False
     
         self.take_action(action)
-        # time.sleep(0.5) # Comment above line and uncomment this line to take control of the game
+        #! time.sleep(0.5) # Comment above line and uncomment this line to take control of the game
 
-        frame = self.grab_screen_shot()
-        damage = self.get_damage(frame)
+        state = self.get_state()
+        damage = self.get_damage(state)
 
-        self.num_of_coins = self.coin_parser.get_num_of_coins(frame, self.num_of_coins)
+        self.num_of_coins = self.coin_parser.get_num_of_coins(state, self.num_of_coins)
 
         if damage == 7 or self.iteration % 500 == 0:
             episode_over = True
 
-        reward, _ = self.reward.get_reward(frame, damage, self.num_of_coins)
+        reward, _ = self.reward.get_reward(state, damage, self.num_of_coins)
 
         self.cur_max_reward = max(self.cur_max_reward, reward)
 
@@ -70,7 +68,7 @@ class Mario64Env(gym.Env):
         else:
             print(f'Model: Reward: {reward} | FPS: {current_fps} | Max Reward: {self.cur_max_reward}')
 
-        return frame, reward, episode_over, False, {}
+        return state, reward, episode_over, False, {}
     
     def reset(self, seed=None, options=None):
         super().reset()
@@ -86,7 +84,7 @@ class Mario64Env(gym.Env):
         self.num_of_coins = 0
         self.reward.reset()
 
-        return self.grab_screen_shot(), {}
+        return self.get_state(), {}
 
     def take_action(self, action):
         if action == 0:
@@ -122,11 +120,11 @@ class Mario64Env(gym.Env):
         # elif action == 9:
         #     keyboard.press_and_release('c')
 
-    def get_damage(self, frame):
-        health = frame[42:88, 255:305]
+    def get_damage(self, state):
+        health = state[42:88, 255:305]
         damage_likelihood = []
 
-        if not np.any(frame):
+        if not np.any(state):
             return 7
 
         for i in range(1, 8):
@@ -143,8 +141,8 @@ class Mario64Env(gym.Env):
         time.sleep(0.1)
         pyautogui.press(f'F7')
 
-    def render_frame(self, frame):                
-        cv2.imshow('debug-render', frame)
+    def render_state(self, state):                
+        cv2.imshow('debug-render', state)
         cv2.waitKey(10000)
         cv2.destroyAllWindows()
     
