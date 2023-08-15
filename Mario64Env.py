@@ -64,15 +64,15 @@ class Mario64Env(gym.Env):
         current_fps = round(((1 / (t_end - t0)) * 10), 0) 
         
         if not episode_over:
-            print(f'Model: Iteration: {self.iteration} | FPS: {current_fps} | Coins: {self.num_of_coins} | Damage: {damage} | Reward: {reward} | Action: {Constants.ACTION_NUM_TO_WORD[action]}')
+            print(f'Iteration: {self.iteration} | FPS: {current_fps} | Coins: {self.num_of_coins} | Damage: {damage} | Reward: {reward} | Action: {Constants.ACTION_NUM_TO_WORD[action]}')
         else:
-            print(f'Model: Reward: {reward} | FPS: {current_fps} | Max Reward: {self.cur_max_reward}')
+            print(f'FPS: {current_fps} | Reward: {reward} | Max Reward: {self.cur_max_reward}')
 
         return state, reward, episode_over, False, {}
     
     def reset(self, seed=None, options=None):
-        super().reset()
         self.take_action(0)
+        super().reset()
         self.get_random_reset_point()
         if self.iteration == 1 and not self.sped_up_game:
             for _ in range(10):
@@ -136,7 +136,7 @@ class Mario64Env(gym.Env):
         return damage + 1
 
     def get_random_reset_point(self):
-        random_reset_point = np.random.randint(0, 5)
+        random_reset_point = np.random.randint(0, 6)
         pyautogui.press(f'{random_reset_point}')
         time.sleep(0.1)
         pyautogui.press(f'F7')

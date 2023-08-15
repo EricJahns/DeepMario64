@@ -3,8 +3,11 @@ import mss
 
 class Constants:
     #! Adjust me to crop the screen, use setup.ipynb to find the correct values
-    SCREEN_X: int = 962
-    SCREEN_Y: int = 536
+    # SCREEN_X: int = 962
+    # SCREEN_Y: int = 536
+
+    SCREEN_X: int = 2
+    SCREEN_Y: int = 83
 
     SCREEN_WIDTH: int = 636
     SCREEN_HEIGHT: int = 424

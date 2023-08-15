@@ -19,13 +19,12 @@ DEVICE = 'cuda'
 POLICY = "CnnLstmPolicy"
 
 def setup_RecurrentPPO(env: Mario64Env):
-    
     config = {
         "policy": POLICY,
         "n_steps": 500,
         "learning_rate": 3e-6,
         "gamma": 0.99,
-        "batch_size": 256,
+        "batch_size": 128,
         "n_epochs": 10,
         "normalize_advantage": True,
         "policy_kwargs": dict(activation_fn=torch.nn.LeakyReLU, net_arch=dict(vf=[64, 64, 32], pi=[64, 64, 32])),
@@ -86,5 +85,6 @@ def get_last_iteration_num(dir_path: str) -> int:
 if __name__ == "__main__":
     env = Mario64Env()
     model = setup_RecurrentPPO(env)
+    model.batch_size = 128
     # print(model.polic y)
     train(model, env)
